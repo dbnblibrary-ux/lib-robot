@@ -66,4 +66,45 @@ if unlent_df is not None:
     user_query = st.text_input("🔍 리브로봇에게 검색어를 알려주세요", placeholder="예: 고양이, 힐링, 재테크")
 
     if user_query:
-        stopwords = ["리브로봇", "찾아줘", "추천해줘", "보여줘", "있니", "있
+        stopwords = ["리브로봇", "찾아줘", "추천해줘", "보여줘", "있니", "있어"]
+        cleaned_query = user_query
+        for word in stopwords: cleaned_query = cleaned_query.replace(word, "")
+        cleaned_query = cleaned_query.strip()
+
+        if cleaned_query:
+            results = unlent_df[unlent_df['서명'].str.contains(cleaned_query, na=False, case=False)].head(8)
+
+            if not results.empty:
+                for i in range(0, len(results), 2):
+                    cols = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(results):
+                            row = results.iloc[i + j]
+                            with cols[j]:
+                                book_info = get_aladin_data(row.get('ISBN'))
+                                if book_info:
+                                    st.markdown("<div class='book-card'>", unsafe_allow_html=True)
+                                    st.markdown("<span class='first-reader-badge'>💎 당신이 첫 번째 대출자입니다!</span>", unsafe_allow_html=True)
+                                    
+                                    c1, c2 = st.columns([1, 2])
+                                    with c1:
+                                        # 여기서 고화질 이미지가 적용됩니다!
+                                        st.image(book_info['cover'], use_container_width=True)
+                                    with c2:
+                                        st.subheader(row['서명'])
+                                        st.write(f"**{row['저자']}** | {row.get('발행자', '출판사 미상')}")
+                                        st.markdown(f"<div class='call-number-box'>🏃‍♂️ 이 책 찾으러 가기: {row['청구기호']}</div>", unsafe_allow_html=True)
+                                        desc = book_info.get('description', '이 책의 첫 페이지를 여는 주인공이 되어보세요.')
+                                        st.markdown(f"<div style='font-size:0.85rem; color:#555;'>{desc[:95]}...</div>", unsafe_allow_html=True)
+                                        st.link_button("🍀 책 정보 상세 보기", book_info['link'])
+                                    st.markdown("</div>", unsafe_allow_html=True)
+                                else:
+                                    st.markdown(f"""
+                                    <div class='book-card'>
+                                        <span class='first-reader-badge'>💎 당신이 첫 번째 대출자입니다!</span>
+                                        <h4>{row['서명']}</h4>
+                                        <div class='call-number-box'>🏃‍♂️ 이 책 찾으러 가기: {row['청구기호']}</div>
+                                    </div>
+                                    """, unsafe_allow_html=True)
+            else:
+                st.warning("🤖: 보물을 찾지 못했어요.")
