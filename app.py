@@ -107,8 +107,10 @@ if unlent_df is not None:
                                     st.markdown("<span class='first-reader-badge'>💎 당신이 첫 번째 대출자입니다!</span>", unsafe_allow_html=True)
                                     
                                     c1, c2 = st.columns([1, 2])
-                                    with c1:
-                                        st.image(book_info['cover'], use_container_width=True)
+with c1:
+    # 이미지가 있을 때, 작은 주소(coversum)를 큰 주소(cover500)로 바꿔서 보여줘!
+    high_res_cover = book_info['cover'].replace('coversum', 'cover500')
+    st.image(high_res_cover, use_container_width=True)
                                     with c2:
                                         st.subheader(row['서명'])
                                         st.write(f"**{row['저자']}** | {row.get('발행자', '출판사 미상')}")
