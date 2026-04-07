@@ -108,3 +108,6 @@ if unlent_df is not None:
                                     """, unsafe_allow_html=True)
             else:
                 st.warning("🤖: 보물을 찾지 못했어요.")
+st.divider() 
+st.write("### 🎁 리브로봇 이용 후기 남기기")
+st.link_button("만족도 설문 참여", "https://docs.google.com/forms/d/e/1FAIpQLSe6HrIbXcKPCg99b0gPTlfy-59A-WDb9O3pVoPZRVxpGA3msg/viewform?usp=dialog")
